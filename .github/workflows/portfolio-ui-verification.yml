@@ -1,0 +1,73 @@
+name: Portfolio UI verification
+
+on:
+  push:
+    branches:
+      - docs/portfolio-professionalization-2026
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Configure Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Build Next.js application
+        run: npm run build
+      - name: Install Chromium screenshot runner
+        run: |
+          npm install --no-save --package-lock=false playwright
+          npx playwright install --with-deps chromium
+      - name: Launch application and capture real page
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ../docs/screenshots
+          npm run start -- -p 3000 > /tmp/portfolio-next.log 2>&1 &
+          echo $! > /tmp/portfolio-next.pid
+          ready=0
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:3000/ > /dev/null; then
+              ready=1
+              break
+            fi
+            sleep 2
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/portfolio-next.log
+            exit 1
+          fi
+          npx playwright screenshot --browser chromium --viewport-size "1440,900" --wait-for-timeout 2000 http://127.0.0.1:3000/ ../docs/screenshots/homepage-desktop.png
+          npx playwright screenshot --browser chromium --viewport-size "390,844" --wait-for-timeout 2000 http://127.0.0.1:3000/ ../docs/screenshots/homepage-mobile.png
+          test -s ../docs/screenshots/homepage-desktop.png
+          test -s ../docs/screenshots/homepage-mobile.png
+      - name: Upload verified screenshot evidence
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: real-estate-ui-screenshots
+          path: docs/screenshots/*.png
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload startup logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: real-estate-startup-logs
+          path: /tmp/portfolio-next.log
+          if-no-files-found: ignore
