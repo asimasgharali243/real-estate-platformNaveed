@@ -1,6 +1,12 @@
-# Real Estate Platform — Web Application
+# Real Estate Listings Platform | Next.js, TypeScript, Express
 
-> **Status:** Source-reviewed documentation draft. Runtime startup, end-to-end tests and screenshots have **not** been independently verified. Review PR before merging.
+Real estate web application built with Next.js App Router, TypeScript and Tailwind CSS, with a separate Express/Mongoose backend.
+
+**Explore this repository:** [Architecture](docs/ARCHITECTURE.md) · [Developer runbook](docs/RUNBOOK.md) · [Screenshot evidence guide](docs/SCREENSHOT_GUIDE.md) · [Audit](docs/PORTFOLIO_AUDIT.md)
+
+**Discoverability topics:** `real-estate` · `property-listings` · `nextjs` · `typescript` · `tailwindcss` · `express` · `mongodb`. These are suggested GitHub repository topics, not a claim that the repository settings have been updated.
+
+> **Status:** Source-reviewed documentation draft. Frontend build, HTTP startup and automated browser screenshot capture **have passed in GitHub Actions**; end-to-end property workflows and backend remain unverified. Review PR before merging.
 
 A property platform under development with Next.js frontend and Express/Mongoose backend. The frontend contains a property-card component and reusable UI elements.
 
@@ -51,7 +57,11 @@ If you see a connection error, verify service endpoints and credentials without 
 
 ## Screenshots
 
-**Not captured yet.** Genuine screenshots will be added under `docs/screenshots/` only after launching the application. Each screenshot will include its screen name, purpose, relevant workflow, capture platform and verification status. Do not substitute generated mockups for runtime evidence.
+The [GitHub Actions browser verification](https://github.com/asimasgharali243/real-estate-platformNaveed/actions/workflows/portfolio-ui-verification.yml) has successfully built and started the frontend and captured real Chromium screenshots. The workflow is configured to commit captures to the review branch. Images below render once those files have been committed.
+
+![Real estate platform homepage on desktop, captured from the running Next.js application](docs/screenshots/homepage-desktop.png)
+
+![Real estate platform homepage on mobile viewport, captured from the running Next.js application](docs/screenshots/homepage-mobile.png)
 
 ## Security and maintenance notes
 
@@ -70,7 +80,7 @@ Open an issue with a reproducible description. Work on a feature branch, keep ch
 - [x] Security and operational caveats
 - [ ] Clean-environment startup verified
 - [ ] End-to-end workflow tested
-- [ ] Real screenshots captured and reviewed
+- [x] Real browser screenshots captured by CI (visual review and repository commit pending)
 - [ ] Production readiness assessed
 
 For the detailed verification checklist see [docs/PORTFOLIO_AUDIT.md](docs/PORTFOLIO_AUDIT.md).
