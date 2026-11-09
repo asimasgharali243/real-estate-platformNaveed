@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   verify-frontend:
@@ -56,6 +56,19 @@ jobs:
           npx playwright screenshot --browser chromium --viewport-size "390,844" --wait-for-timeout 2000 http://127.0.0.1:3000/ ../docs/screenshots/homepage-mobile.png
           test -s ../docs/screenshots/homepage-desktop.png
           test -s ../docs/screenshots/homepage-mobile.png
+      - name: Commit genuine screenshots to review branch
+        if: success()
+        working-directory: .
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/screenshots/homepage-desktop.png docs/screenshots/homepage-mobile.png
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: capture real desktop and mobile homepage screenshots [skip ci]"
+            git push origin HEAD:docs/portfolio-professionalization-2026
+          fi
       - name: Upload verified screenshot evidence
         if: success()
         uses: actions/upload-artifact@v4
